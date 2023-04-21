@@ -1,19 +1,14 @@
-import { Counter } from "./components/Counter";
-import { FetchData } from "./components/FetchData";
-import { Home } from "./components/Home";
+import { Gallery } from "./components/Gallery";
+import { UploadImage } from "./components/UploadImage";
 
 const AppRoutes = [
   {
     index: true,
-    element: <Home />
+    element: <Gallery />
   },
   {
-    path: '/counter',
-    element: <Counter />
-  },
-  {
-    path: '/fetch-data',
-    element: <FetchData />
+    path: '/upload-image',
+    element: <UploadImage />
   }
 ];
 
