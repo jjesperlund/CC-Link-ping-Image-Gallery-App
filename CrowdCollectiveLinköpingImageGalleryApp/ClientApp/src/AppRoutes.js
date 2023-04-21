@@ -1,10 +1,10 @@
-import { Gallery } from "./components/Gallery";
+import { GalleryViewer } from "./components/GalleryViewer";
 import { UploadImage } from "./components/UploadImage";
 
 const AppRoutes = [
   {
     index: true,
-    element: <Gallery />
+    element: <GalleryViewer />
   },
   {
     path: '/upload-image',
