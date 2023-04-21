@@ -15,7 +15,7 @@ namespace CrowdCollectiveLinköpingImageGalleryApp.Services
 
         public static DriveService GetClient()
         {
-            string credenitalsJSONPath = $"google-drive-service-account-secret.json";
+            string credenitalsJSONPath = $"Config/google-drive-service-account-secret.json";
 
             using (var stream = new FileStream(credenitalsJSONPath, FileMode.Open, FileAccess.Read))
             {
