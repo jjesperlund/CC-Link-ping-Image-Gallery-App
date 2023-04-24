@@ -4,13 +4,22 @@
   word-break: break-all;
 }
 
+header {
+  background-color: #d0c7b8;
+}
+
 html {
   font-size: 14px;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 @media (min-width: 768px) {
   html {
     font-size: 16px;
   }
+}
+
+body {
+  background-color: #e1dfd7;
 }
 
 .box-shadow {
