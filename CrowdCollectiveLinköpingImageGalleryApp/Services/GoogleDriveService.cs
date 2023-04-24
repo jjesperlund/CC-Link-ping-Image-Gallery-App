@@ -4,6 +4,7 @@ using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using Google.Apis.Download;
+using CrowdCollectiveLinköpingImageGalleryApp.Models;
 
 namespace CrowdCollectiveLinköpingImageGalleryApp.Services
 {
@@ -41,30 +42,30 @@ namespace CrowdCollectiveLinköpingImageGalleryApp.Services
             return null;
         }
 
-        // Return list of image IDs in the Google Drive DRIVE_FOLDER_ID folder
-        public static List<string> GetImageIds()
+        // Return list of Images in the Google Drive DRIVE_FOLDER_ID folder
+        public static List<Image> GetImages()
         {
             var request = _driveClient.Files.List();
             request.PageSize = 1000;
             request.Q = $"'{DRIVE_FOLDER_ID}' in parents";
-            request.Fields = "files(name,id,size)";
+            request.Fields = "files(name,id,size,createdTime)";
             var results = request.Execute();
 
-            List<string> fileIds = new List<string>();
+            List<Image> images = new List<Image>();
 
             foreach (var driveFile in results.Files)
             {
-                fileIds.Add(driveFile.Id);
+                images.Add(new Image(driveFile.Name, driveFile.Id, driveFile.Size, driveFile.CreatedTime));
             }
 
-            return fileIds;
+            return images;
         }
 
-        public static MemoryStream DownloadImage(string imageId)
+        public static MemoryStream DownloadImage(Image image)
         {
             try
             { 
-                var request = _driveClient.Files.Get(imageId);
+                var request = _driveClient.Files.Get(image.Id);
                 var stream = new MemoryStream();
 
                 // Add a handler which will be notified on progress changes.
@@ -82,12 +83,12 @@ namespace CrowdCollectiveLinköpingImageGalleryApp.Services
                                 }
                             case DownloadStatus.Completed:
                                 {
-                                    Console.WriteLine($"Download of {imageId} complete.");
+                                    Console.WriteLine($"Download of {image.Id} complete.");
                                     break;
                                 }
                             case DownloadStatus.Failed:
                                 {
-                                    Console.WriteLine($"Download of {imageId} failed.");
+                                    Console.WriteLine($"Download of {image.Id} failed.");
                                     break;
                                 }
                         }

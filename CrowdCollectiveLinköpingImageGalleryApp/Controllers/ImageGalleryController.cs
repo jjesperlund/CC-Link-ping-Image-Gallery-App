@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CrowdCollectiveLinköpingImageGalleryApp.Services;
+using CrowdCollectiveLinköpingImageGalleryApp.Models;
 using Google.Apis.Drive.v3;
 
 namespace CrowdCollectiveLinköpingImageGalleryApp.Controllers;
@@ -12,11 +13,14 @@ public class ImageGalleryController : ControllerBase
     public List<byte[]> Get()
     {
         List<byte[]> images = new List<byte[]>();
-        List<string> imageIds = GoogleDriveService.GetImageIds();
+        List<Image> imagesList = GoogleDriveService.GetImages();
 
-        foreach (string id in imageIds)
+        foreach (Image image in imagesList)
         {
-            images.Add(GoogleDriveService.DownloadImage(id).ToArray());
+            // TODO: Rule for when to not download:
+            // Max downloads: 100 images,
+            // CreatedAt must be greater than DateTime.Now - 1 month?
+            images.Add(GoogleDriveService.DownloadImage(image).ToArray());
         }
 
         return images;
