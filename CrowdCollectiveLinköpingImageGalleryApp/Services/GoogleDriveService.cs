@@ -12,7 +12,9 @@ namespace CrowdCollectiveLinköpingImageGalleryApp.Services
     {
         private const string DRIVE_FOLDER_ID = "1K3RgYIJcUsq5hZGI9HlcGvlTVG_HH5WV";
 
-        public static DriveService _driveClient = GetClient();
+        private static DriveService _driveClient = GetClient();
+
+
 
         public static DriveService GetClient()
         {
