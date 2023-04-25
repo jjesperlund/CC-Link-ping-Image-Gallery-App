@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { GalleryViewer } from "./components/GalleryViewer";
 import { UploadImage } from "./components/UploadImage";
+import { parseImages, getImageDimensions } from './helpers/ImageGalleryHelper';
 import './custom.css';
 
 export default class App extends Component {
@@ -23,36 +24,13 @@ export default class App extends Component {
 
     let imagesDimensions = [];
     for (let i = 0; i < data.length; i++) {
-      const dimensions = await this.getImageDimensions(data[i]);
+      const dimensions = await getImageDimensions(data[i]);
       imagesDimensions.push(dimensions)
     }
 
-    const images = this.parseImages(data, imagesDimensions);
+    const images = parseImages(data, imagesDimensions);
     this.setState({ images: images, loading: false });
-}
-
-parseImages(imageBytesList, imagesDimensions) {
-  // Parse byte array of images to gallery format
-  return imageBytesList.map((imageBytes, index) => {
-    const imageSrc = "data:image/jpeg;base64," + imageBytes;
-    const imageAspectRatio = imagesDimensions[index].height / imagesDimensions[index].width;
-    return {
-      src: imageSrc,
-      width: 2,
-      height: 2 * imageAspectRatio
-    }
-  });
-}
-
-getImageDimensions(imageSrc) {
-  return new Promise (function (resolved, rejected) {
-    let i = new Image()
-    i.onload = function(){
-      resolved({ width: i.width, height: i.height })
-    };
-    i.src = "data:image/jpeg;base64," + imageSrc;
-  })
-} 
+  }
 
   render() {
     return (
