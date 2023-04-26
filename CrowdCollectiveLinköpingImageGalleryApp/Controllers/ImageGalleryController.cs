@@ -9,7 +9,7 @@ namespace CrowdCollectiveLinköpingImageGalleryApp.Controllers;
 [Route("[controller]")]
 public class ImageGalleryController : ControllerBase
 {
-    [HttpGet]
+    // GET: /imagegallery
     public List<byte[]> Get()
     {
         List<byte[]> images = new List<byte[]>();
@@ -24,6 +24,31 @@ public class ImageGalleryController : ControllerBase
         }
 
         return images;
+    }
+
+    // POST: /imagegallery/addimages
+    [HttpPost]
+    [Route("addimages")]
+    public List<Image> AddImages([FromBody] UploadImagesRequest body)
+    {
+        if (body.imagesList?.Count < 1)
+        {
+            Response.StatusCode = 400; // Bad request
+            return null;
+        }
+        else
+        {
+            Response.StatusCode = 200;
+            List<Image> uploadedImages = GoogleDriveService.UploadImages(body.imagesList);
+
+            if (uploadedImages == null)
+            {
+                Response.StatusCode = 500; // Internal server error
+                return null;
+            }
+
+            return uploadedImages;
+        }
     }
 }
 

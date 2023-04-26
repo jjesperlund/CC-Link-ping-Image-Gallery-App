@@ -5,6 +5,10 @@ using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using Google.Apis.Download;
 using CrowdCollectiveLinköpingImageGalleryApp.Models;
+using System.Collections;
+using System.Collections.Generic;
+using Google.Apis.Upload;
+using Microsoft.AspNetCore.Http;
 
 namespace CrowdCollectiveLinköpingImageGalleryApp.Services
 {
@@ -116,6 +120,59 @@ namespace CrowdCollectiveLinköpingImageGalleryApp.Services
             return null;
         }
 
+        public static List<Image> UploadImages(List<string> imagesBase64)
+        {
+            List<Image> uploadedImages = new List<Image>();
+
+            foreach (string imageBase64 in imagesBase64)
+            {
+                byte[] imageBytes = Convert.FromBase64String(imageBase64);
+                Image result = UploadImage(imageBytes);
+                uploadedImages.Add(result);
+            }
+
+            return uploadedImages;
+        }
+
+        private static Image UploadImage(byte[] imageBytes)
+        {
+            try
+            { 
+                var fileMetadata = new Google.Apis.Drive.v3.Data.File()
+                {
+                    Name = "uploaded_image_" + GenerateUniqueId(),
+                    Parents = new List<string> { DRIVE_FOLDER_ID }
+                };
+
+                MemoryStream stream = new MemoryStream(imageBytes);
+
+                // Create a new file, with metadata and stream.
+                var request = _driveClient.Files.Create(fileMetadata, stream, "image/jpeg");
+                request.Fields = "name,id,size,createdTime";
+                var results = request.Upload();
+
+                if (results.Status == UploadStatus.Failed)
+                {
+                    Console.WriteLine($"GoogleDriveSerive.UploadImage: Error uploading file: {results.Exception.Message}");
+                }
+
+                return new Image(
+                    request.ResponseBody.Name,
+                    request.ResponseBody.Id,
+                    request.ResponseBody?.Size,
+                    request.ResponseBody?.CreatedTime);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"GoogleDriveSerive.UploadImage: Error uploading file");
+                return null;
+            }
+        }
+
+        private static string GenerateUniqueId()
+        {
+            return Guid.NewGuid().ToString();
+        }
     }
 }
 
