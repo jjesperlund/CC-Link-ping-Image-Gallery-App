@@ -89,12 +89,12 @@ namespace CrowdCollectiveLinköpingImageGalleryApp.Services
                                 }
                             case DownloadStatus.Completed:
                                 {
-                                    Console.WriteLine($"Download of {image.Id} complete.");
+                                    Console.WriteLine($"GoogleDriveService.DownloadImage: Download of {image.Id} complete.");
                                     break;
                                 }
                             case DownloadStatus.Failed:
                                 {
-                                    Console.WriteLine($"Download of {image.Id} failed.");
+                                    Console.WriteLine($"GoogleDriveService.DownloadImage: Download of {image.Id} failed.");
                                     break;
                                 }
                         }
@@ -150,6 +150,8 @@ namespace CrowdCollectiveLinköpingImageGalleryApp.Services
                 var request = _driveClient.Files.Create(fileMetadata, stream, "image/jpeg");
                 request.Fields = "name,id,size,createdTime";
                 var results = request.Upload();
+
+                Console.WriteLine("GoogleDriveService.UploadImage: Uploaded image successfully");
 
                 if (results.Status == UploadStatus.Failed)
                 {

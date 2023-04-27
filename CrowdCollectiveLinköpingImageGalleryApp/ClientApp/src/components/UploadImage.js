@@ -30,12 +30,15 @@ export class UploadImage extends Component {
     });
 
     Promise.all(promises).then((imagesBase64) => {
-      console.log(imagesBase64)
       this.setState({
         selectedImages: imagesBase64,
         selectionCompleted: true
       });
     });
+  }
+
+  uploadSelectedImages = () => {
+    this.props.uploadImages(this.state.selectedImages);
   }
 
   displaySelectedImages() {
@@ -101,6 +104,7 @@ export class UploadImage extends Component {
                 variant="contained"
                 disabled={this.state.selectedImages.length === 0}
                 endIcon={<SendIcon />}
+                onClick={this.uploadSelectedImages}
               >
                 Upload
               </Button>

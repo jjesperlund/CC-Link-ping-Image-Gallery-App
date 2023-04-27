@@ -5,7 +5,9 @@ const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_H
   env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'http://localhost:5507';
 
 const context =  [
-  "/imagegallery",
+  "/imagegallery/downloadAllImages",
+  "/imagegallery/downloadImages",
+  "/imagegallery/addImages"
 ];
 
 module.exports = function(app) {

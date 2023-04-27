@@ -9,8 +9,10 @@ namespace CrowdCollectiveLinköpingImageGalleryApp.Controllers;
 [Route("[controller]")]
 public class ImageGalleryController : ControllerBase
 {
-    // GET: /imagegallery
-    public List<byte[]> Get()
+    // GET: /imagegallery/downloadAllImages
+    [HttpGet]
+    [Route("downloadAllImages")]
+    public List<byte[]> DownloadAllImages()
     {
         List<byte[]> images = new List<byte[]>();
         List<Image> imagesList = GoogleDriveService.GetImages();
@@ -26,9 +28,26 @@ public class ImageGalleryController : ControllerBase
         return images;
     }
 
+    // GET: /imagegallery/downloadImages?ids=<id1>,<id2>...
+    [HttpGet]
+    [Route("downloadImages")]
+    public List<byte[]> DownloadImages(string ids)
+    {
+        List<string> imageIds = ids.Split(new char[] { ',' }).ToList();
+        List<byte[]> images = new List<byte[]>();
+
+        foreach (string imageId in imageIds)
+        {
+            Image image = new Image(imageId);
+            images.Add(GoogleDriveService.DownloadImage(image).ToArray());
+        }
+
+        return images;
+    }
+
     // POST: /imagegallery/addimages
     [HttpPost]
-    [Route("addimages")]
+    [Route("addImages")]
     public List<Image> AddImages([FromBody] UploadImagesRequest body)
     {
         if (body.imagesList?.Count < 1)
