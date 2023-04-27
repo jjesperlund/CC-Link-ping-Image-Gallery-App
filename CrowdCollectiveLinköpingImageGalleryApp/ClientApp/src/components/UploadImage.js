@@ -5,6 +5,8 @@ import SendIcon from '@mui/icons-material/Send';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 import { FileUploader } from "react-drag-drop-files";
 
@@ -18,7 +20,13 @@ export class UploadImage extends Component {
     this.supportedFileTypes = ["JPG", "JPEG", "PNG"];
     this.maxImageSizeInMegabytes = 30;
 
-    this.state = { selectedImages: [], selectionCompleted: false };
+    this.state = {
+      selectedImages: [],
+      selectionCompleted: false,
+      isUploading: false,
+      uploadCompleted: false,
+      uploadErrorMessage: ''
+    };
   }
 
   handleChange = images => {
@@ -37,14 +45,62 @@ export class UploadImage extends Component {
     });
   }
 
-  uploadSelectedImages = () => {
-    this.props.uploadImages(this.state.selectedImages);
+  uploadSelectedImages = async () => {
+    this.setState({ isUploading: true, uploadCompleted: false, uploadErrorMessage: '' });
+
+    const uploadSuccessful = await this.props.uploadImages(this.state.selectedImages);
+    let errorMessage = '';
+
+    if (!uploadSuccessful) {
+      errorMessage = 'Failed to upload image(s).'
+    }
+    
+    this.setState({ isUploading: false, uploadCompleted: true, uploadErrorMessage: errorMessage });
+    setTimeout(this.resetUpload, 3000);
+  }
+
+  resetUpload = () => {
+    this.setState({
+      isUploading: false,
+      uploadCompleted: false,
+      uploadErrorMessage: '',
+      selectedImages: [],
+      selectionCompleted: false
+    });
   }
 
   displaySelectedImages() {
     return this.state.selectedImages.map((image, index) => {
       return <img src={image} key={index} width="40" />
     });
+  }
+
+  renderUploadStatus() {
+    const { isUploading, uploadCompleted, uploadErrorMessage } = this.state;
+    
+    if (isUploading) {
+      return <CircularProgress color="primary" />;
+    }
+
+    if (uploadCompleted) {
+      return (
+        <CheckCircleOutlineIcon
+          color="green"
+          style={{ transform: 'scale(2.3)', color: 'green' }}
+        />
+      );
+    }
+
+    return (
+        <Button
+        variant="contained"
+        disabled={this.state.selectedImages.length === 0}
+        endIcon={<SendIcon />}
+        onClick={this.uploadSelectedImages}
+        >
+          Upload
+        </Button>
+      );    
   }
 
   render() {
@@ -100,14 +156,7 @@ export class UploadImage extends Component {
           </Grid>
           <Grid item xs={12}>
             <Typography align='center' variant='h6' style={{ paddingTop: '3%' }}>
-              <Button
-                variant="contained"
-                disabled={this.state.selectedImages.length === 0}
-                endIcon={<SendIcon />}
-                onClick={this.uploadSelectedImages}
-              >
-                Upload
-              </Button>
+              {this.renderUploadStatus()}
             </Typography>
           </Grid>
         </Grid>

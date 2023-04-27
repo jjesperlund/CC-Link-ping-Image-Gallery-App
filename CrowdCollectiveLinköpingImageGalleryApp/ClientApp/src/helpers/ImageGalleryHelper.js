@@ -21,7 +21,8 @@ export function parseImages(imageBytesList, imagesDimensions) {
     return {
       src: imageSrc,
       width: 2,
-      height: 2 * imageAspectRatio
+      height: 2 * imageAspectRatio,
+      key: generate_uuidv4()
     }
   });
 }
@@ -34,4 +35,12 @@ export function getImageDimensions(imageSrc) {
     };
     i.src = "data:image/jpeg;base64," + imageSrc;
   })
-} 
+}
+
+function generate_uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,
+  function(c) {
+     var uuid = Math.random() * 16 | 0, v = c == 'x' ? uuid : (uuid & 0x3 | 0x8);
+     return uuid.toString(16);
+  });
+}

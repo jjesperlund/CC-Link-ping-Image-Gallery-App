@@ -13,10 +13,7 @@ class App extends Component {
     super(props);
     this.state = {
       images: [],
-      isFetchingAllImages: true,
-      isUploading: false,
-      uploadCompleted: true,
-      uploadErrorMessage: ''
+      isFetchingAllImages: true
     };
   }
 
@@ -80,18 +77,22 @@ class App extends Component {
         isUploading: false,
         uploadCompleted: true
       });
+
+      return false;
     } else {
       const responseBody = await response.json();
-      this.setState({ isUploading: false, uploadCompleted: true, uploadErrorMessage: '' });
-      setTimeout(this.onUploadCompleted(responseBody), 3000);
+      const imageIds = responseBody.map(image => image.id);
+      this.fetchImages(imageIds);
+      setTimeout(this.onUploadCompleted, 2000);
     }
+
+    return true;
   }
 
   onUploadCompleted = responseBody => {
       // TODO: Redirect to home page     
-      
-      const imageIds = responseBody.map(image => image.id);
-      this.fetchImages(imageIds);
+
+
   }
 
   generateCommaSeparatedIdsString(imageIdList) {
@@ -113,7 +114,9 @@ class App extends Component {
           <Route
             path="/upload-image"
             element={
-            <UploadImage uploadImages={this.uploadImages} />
+            <UploadImage
+              uploadImages={this.uploadImages}
+            />
             }
           />
         </Routes>
