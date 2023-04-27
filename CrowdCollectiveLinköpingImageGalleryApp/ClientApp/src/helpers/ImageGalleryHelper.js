@@ -37,6 +37,14 @@ export function getImageDimensions(imageSrc) {
   })
 }
 
+export function generateUniqueRandomNumberList(quantity, maxValue){
+  const set = new Set()
+  while(set.size < quantity) {
+    set.add(Math.floor(Math.random() * maxValue) + 1)
+  }
+  return set;
+}
+
 function generate_uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,
   function(c) {
